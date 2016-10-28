@@ -20,11 +20,18 @@ import okhttp3.Response;
 
 public class CallService extends IntentService {
 
-    final String CLIENT_ID = "ZURIFJGOKBITYRPLBHZHRSXTHAFGYADA52RJRG5HHJPNVKXS";
-    final String CLIENT_SECRET = "ZV21NT0DOHPKTKURHHOYNABHG14CLQ32J0WIQAADKZBQFNCH";
+    private static final String CLIENT_ID = "ZURIFJGOKBITYRPLBHZHRSXTHAFGYADA52RJRG5HHJPNVKXS";
+    private static final String CLIENT_SECRET = "ZV21NT0DOHPKTKURHHOYNABHG14CLQ32J0WIQAADKZBQFNCH";
+    private static final String VERSION = "20130815";
+    private static final String LIMIT = "10";
+    private static final String QUERY = "pizza";
+    private static final String latitude = "40.7463956";
+    private static final String longtitude = "-73.9852992";
 
-    final String latitude = "40.7463956";
-    final String longtitude = "-73.9852992";
+    private static final String URL = "https://api.foursquare.com/v2/venues/search?client_id="
+            + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&v=" + VERSION + "&limit=" + LIMIT + "&ll=" + latitude + "," + longtitude + "&query=" + QUERY;;
+
+
 
     ArrayList<FoursquareRestaurant> pizzaList;
 
@@ -36,14 +43,13 @@ public class CallService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        String url = "https://api.foursquare.com/v2/venues/search?client_id=" + CLIENT_ID + "&client_secret=" + CLIENT_SECRET +
-                "&v=20130815&ll=" + latitude + "," + longtitude + "&query=pizza&offset=0&limit=10";
+
         OkHttpClient client = new OkHttpClient();
         String jsonBody = null;
         Response response;
         try {
             Request request = new Request.Builder()
-                .url(url)
+                .url(URL)
                 .build();
 
             response = client.newCall(request).execute();
