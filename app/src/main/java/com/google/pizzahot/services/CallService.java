@@ -2,13 +2,15 @@ package com.google.pizzahot.services;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.pizzahot.model.FoursquareResponse;
 import com.google.pizzahot.model.FoursquareRestaurant;
+import com.google.pizzahot.model.Meta;
+import com.google.pizzahot.model.Venue;
 
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,10 +29,12 @@ public class CallService extends IntentService {
     private static final String QUERY = "pizza";
     private static final String latitude = "40.7463956";
     private static final String longtitude = "-73.9852992";
+    private static final String TAG = "myLogs";
 
     private static final String URL = "https://api.foursquare.com/v2/venues/search?client_id="
-            + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&v=" + VERSION + "&limit=" + LIMIT + "&ll=" + latitude + "," + longtitude + "&query=" + QUERY;;
+            + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&v=" + VERSION + "&limit=" + LIMIT + "&ll=" + latitude + "," + longtitude + "&query=" + QUERY;
 
+    private static final Gson jsonMarshaller = new GsonBuilder().create();
 
 
     ArrayList<FoursquareRestaurant> pizzaList;
@@ -63,38 +67,30 @@ public class CallService extends IntentService {
     }
 
 
+
     private static ArrayList<FoursquareRestaurant> parseFoursquare(String response) {
 
         ArrayList<FoursquareRestaurant> temp = new ArrayList<FoursquareRestaurant>();
-        try {
-            JSONObject jsonObject = new JSONObject(response);
 
-            if (jsonObject.has("response")) {
-                if (jsonObject.getJSONObject("response").has("venues")) {
-                    JSONArray jsonArray = jsonObject.getJSONObject("response").getJSONArray("venues");
+        FoursquareResponse resp = jsonMarshaller.fromJson(response, FoursquareResponse.class);
 
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        FoursquareRestaurant poi = new FoursquareRestaurant();
-                        if (jsonArray.getJSONObject(i).has("name")) {
-                            poi.setName(jsonArray.getJSONObject(i).getString("name"));
-
-                            if (jsonArray.getJSONObject(i).has("location")) {
-                                if (jsonArray.getJSONObject(i).getJSONObject("location").has("distance")) {
-                                     poi.setDistance(jsonArray.getJSONObject(i).getJSONObject("location").getInt("distance"));
-
-                                    temp.add(poi);
-                                }
-                            }
-                        }
-                    }
+        if(resp.getMeta().getCode()==200){
+            if(resp.getResponse()!=null){
+                if (resp.getResponse().getVenues()!=null&&resp.getResponse().getVenues().length!=0){
+                    Venue [] venues = resp.getResponse().getVenues();
+                    for (int i = 0; i < venues.length; i++) {
+                        Log.d(TAG,"Distance: " + venues[i].getLocation().getDistance());
                 }
+
             }
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return new ArrayList<FoursquareRestaurant>();
+
+
+            }
         }
-        return temp;
+
+
+        return null;
 
     }
 

@@ -5,5 +5,14 @@ package com.google.pizzahot.model;
  */
 
 public class Response {
-    public Venue [] venues;
+
+    private Venue [] venues;
+
+    public Venue[] getVenues() {
+        return venues;
+    }
+
+    public void setVenues(Venue[] venues) {
+        this.venues = venues;
+    }
 }
