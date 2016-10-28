@@ -10,10 +10,12 @@ import com.google.pizzahot.model.FoursquareResponse;
 import com.google.pizzahot.model.FoursquareRestaurant;
 import com.google.pizzahot.model.Meta;
 import com.google.pizzahot.model.Venue;
+import com.google.pizzahot.model.VenuesData;
 
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -75,19 +77,20 @@ public class CallService extends IntentService {
         FoursquareResponse resp = jsonMarshaller.fromJson(response, FoursquareResponse.class);
 
         if(resp.getMeta().getCode()==200){
-            if(resp.getResponse()!=null){
-                if (resp.getResponse().getVenues()!=null&&resp.getResponse().getVenues().length!=0){
+            if(resp.getResponse()!=null
+                    && resp.getResponse().getVenues() !=null
+                    && resp.getResponse().getVenues().length>0){
                     Venue [] venues = resp.getResponse().getVenues();
                     for (int i = 0; i < venues.length; i++) {
                         Log.d(TAG,"Distance: " + venues[i].getLocation().getDistance());
-                }
-
+                    }
+            }else{
+                // TODO сообщить что новых результатов нет
             }
-
-
-
-            }
+        } else {
+            // TODO убрать прогресс, сообщить об ошибке.
         }
+
 
 
         return null;

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.google.pizzahot.DB.HelperFactory;
 import com.google.pizzahot.services.CallService;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class MainActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        HelperFactory.setHelper(getApplicationContext());
         setContentView(com.google.pizzahot.R.layout.activity_main);
 
         if (isOnline()){
@@ -47,5 +49,11 @@ public class MainActivity extends ListActivity {
                 (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
+    @Override
+    protected void onDestroy() {
+        HelperFactory.releaseHelper();
+        super.onDestroy();
     }
 }
