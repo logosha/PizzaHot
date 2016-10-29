@@ -5,6 +5,9 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.google.pizzahot.DB.tables.LocationTable;
+import com.google.pizzahot.DB.tables.VenueTable;
+import com.google.pizzahot.model.Venue;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
@@ -18,14 +21,14 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String TAG = DatabaseHelper.class.getSimpleName();
 
     //имя файла базы данных который будет храниться в /data/data/APPNAME/DATABASE_NAME.db
-    private static final String DATABASE_NAME ="myappname.db";
+    private static final String DATABASE_NAME ="foresquarePizza.db";
 
     //с каждым увеличением версии, при нахождении в устройстве БД с предыдущей версией будет выполнен метод onUpgrade();
     private static final int DATABASE_VERSION = 1;
 
     //ссылки на DAO соответсвующие сущностям, хранимым в БД
-    private GoalDAO goalDao = null;
-    private RoleDAO roleDao = null;
+    private VenueTable venueTable = null;
+    private LocationTable locationTable = null;
 
     public DatabaseHelper(Context context){
         super(context,DATABASE_NAME, null, DATABASE_VERSION);
@@ -36,11 +39,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource){
         try
         {
-            TableUtils.createTable(connectionSource, Goal.class);
-            TableUtils.createTable(connectionSource, Role.class);
+            TableUtils.createTable(connectionSource, VenueTable.class);
+            TableUtils.createTable(connectionSource, LocationTable.class);
         }
-        catch (SQLException e){
-            Log.e(TAG, "error creating DB " + DATABASE_NAME);
+        catch (Exception e){
+                        Log.e(TAG, "error creating DB " + DATABASE_NAME);
             throw new RuntimeException(e);
         }
     }
@@ -51,36 +54,36 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                           int newVer){
         try{
             //Так делают ленивые, гораздо предпочтительнее не удаляя БД аккуратно вносить изменения
-            TableUtils.dropTable(connectionSource, Goal.class, true);
-            TableUtils.dropTable(connectionSource, Role.class, true);
+            TableUtils.dropTable(connectionSource, VenueTable.class, true);
+            TableUtils.dropTable(connectionSource, LocationTable.class, true);
             onCreate(db, connectionSource);
         }
-        catch (SQLException e){
+        catch (Exception e){
             Log.e(TAG,"error upgrading db "+DATABASE_NAME+"from ver "+oldVer);
             throw new RuntimeException(e);
         }
     }
 
     //синглтон для GoalDAO
-    public GoalDAO getGoalDAO() throws SQLException{
-        if(goalDao == null){
-            goalDao = new GoalDAO(getConnectionSource(), Goal.class);
+    public VenueTable getVenueDAO() throws Exception{
+        if(venueTable == null){
+            venueTable = getDao(VenueTable.class);
         }
-        return goalDao;
+        return venueTable;
     }
     //синглтон для RoleDAO
-    public RoleDAO getRoleDAO() throws SQLException{
-        if(roleDao == null){
-            roleDao = new RoleDAO(getConnectionSource(), Role.class);
+    public LocationTable getLocationDAO() throws Exception{
+        if(locationTable == null){
+            locationTable = getDao(LocationTable.class);
         }
-        return roleDao;
+        return locationTable;
     }
 
     //выполняется при закрытии приложения
     @Override
     public void close(){
         super.close();
-        goalDao = null;
-        roleDao = null;
+        venueTable = null;
+        locationTable = null;
     }
 }
