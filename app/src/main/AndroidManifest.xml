@@ -22,7 +22,7 @@
 
         <service
             android:name=".services.CallService"
-            android:exported="false"></service>
+            android:exported="false" />
     </application>
 
 </manifest>

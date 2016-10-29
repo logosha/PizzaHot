@@ -2,7 +2,6 @@ package com.google.pizzahot.services;
 
 import android.Manifest;
 import android.app.IntentService;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -14,16 +13,13 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.pizzahot.MainActivity;
 import com.google.pizzahot.model.FoursquareResponse;
 import com.google.pizzahot.model.FoursquareRestaurant;
-import com.google.pizzahot.model.Meta;
 import com.google.pizzahot.model.Venue;
-import com.google.pizzahot.model.VenuesData;
-
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -40,8 +36,6 @@ public class CallService extends IntentService implements LocationListener {
     private static final String latitudeNY = "40.7463956";
     private static final String longtitudeNY = "-73.9852992";
     private static final String TAG = "myLogs";
-
-
 
 
     private static final Gson jsonMarshaller = new GsonBuilder().create();
@@ -62,12 +56,11 @@ public class CallService extends IntentService implements LocationListener {
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                  }
+        }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
         return location;
     }
-
 
 
     @Override
@@ -84,8 +77,8 @@ public class CallService extends IntentService implements LocationListener {
         Response response;
         try {
             Request request = new Request.Builder()
-                .url(url)
-                .build();
+                    .url(url)
+                    .build();
 
             response = client.newCall(request).execute();
             jsonBody = response.body().string();
@@ -95,9 +88,16 @@ public class CallService extends IntentService implements LocationListener {
 
         pizzaList = parseFoursquare(jsonBody);
 
+        sendBroadcast();
     }
 
 
+
+    public void sendBroadcast(){
+        Intent intent = new Intent(MainActivity.BROADCAST_ACTION);
+        intent.putExtra(MainActivity.PARAM_RESULT, MainActivity.STATUS_FINISH_SUCCESS);
+        sendBroadcast(intent);
+    }
 
     private static ArrayList<FoursquareRestaurant> parseFoursquare(String response) {
 
@@ -105,15 +105,15 @@ public class CallService extends IntentService implements LocationListener {
 
         FoursquareResponse resp = jsonMarshaller.fromJson(response, FoursquareResponse.class);
 
-        if(resp.getMeta().getCode()==200){
-            if(resp.getResponse()!=null
-                    && resp.getResponse().getVenues() !=null
-                    && resp.getResponse().getVenues().length>0){
-                    Venue [] venues = resp.getResponse().getVenues();
-                    for (int i = 0; i < venues.length; i++) {
-                        Log.d(TAG,"Distance: " + venues[i].getLocation().getDistance());
-                    }
-            }else{
+        if (resp.getMeta().getCode() == 200) {
+            if (resp.getResponse() != null
+                    && resp.getResponse().getVenues() != null
+                    && resp.getResponse().getVenues().length > 0) {
+                Venue[] venues = resp.getResponse().getVenues();
+                for (int i = 0; i < venues.length; i++) {
+                    Log.d(TAG, "Distance: " + venues[i].getLocation().getDistance());
+                }
+            } else {
                 // TODO сообщить что новых результатов нет
             }
         } else {
