@@ -6,7 +6,9 @@ import android.util.Log;
 
 import com.google.pizzahot.DB.tables.LocationData;
 import com.google.pizzahot.DB.tables.VenueData;
+import com.google.pizzahot.model.Location;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
@@ -24,9 +26,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     //с каждым увеличением версии, при нахождении в устройстве БД с предыдущей версией будет выполнен метод onUpgrade();
     private static final int DATABASE_VERSION = 1;
 
-    //ссылки на DAO соответсвующие сущностям, хранимым в БД
-    private VenueData venueTable = null;
-    private LocationData locationTable = null;
+    private Dao<VenueData, Integer> venueDao = null;
+    private Dao<LocationData, Integer> locationDao = null;
 
     public DatabaseHelper(Context context){
         super(context,DATABASE_NAME, null, DATABASE_VERSION);
@@ -41,7 +42,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, LocationData.class);
         }
         catch (Exception e){
-                        Log.e(TAG, "error creating DB " + DATABASE_NAME);
+            Log.e(TAG, "error creating DB " + DATABASE_NAME);
             throw new RuntimeException(e);
         }
     }
@@ -62,26 +63,26 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    //синглтон для GoalDAO
-    public VenueData getVenueDAO() throws Exception{
-        if(venueTable == null){
-            venueTable = getDao(VenueData.class);
+    //синглтон для VenueDAO
+    public Dao<VenueData, Integer> getVenueDAO() throws Exception{
+        if(venueDao == null){
+            venueDao = getDao(VenueData.class);
         }
-        return venueTable;
+        return venueDao;
     }
-    //синглтон для RoleDAO
-    public LocationData getLocationDAO() throws Exception{
-        if(locationTable == null){
-            locationTable = getDao(LocationData.class);
+    //синглтон для LocationDAO
+    public Dao<LocationData, Integer> getLocationDAO() throws Exception{
+        if(locationDao == null){
+            locationDao = getDao(LocationData.class);
         }
-        return locationTable;
+        return locationDao;
     }
 
     //выполняется при закрытии приложения
     @Override
     public void close(){
         super.close();
-        venueTable = null;
-        locationTable = null;
+        venueDao = null;
+        locationDao = null;
     }
 }
