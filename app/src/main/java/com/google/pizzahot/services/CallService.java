@@ -119,7 +119,7 @@ public class CallService extends IntentService implements LocationListener {
                     && resp.getResponse().getVenues().length > 0) {
                 Venue[] venues = resp.getResponse().getVenues();
                 for (int i = 0; i < venues.length; i++) {
-                    Log.d(TAG, "Distance: " + venues[i].getLocation().getDistance());
+                    Log.d(TAG, "Distance: " + venues[i].getLocation().getCountry());
                 }
             } else {
                 // TODO сообщить что новых результатов нет

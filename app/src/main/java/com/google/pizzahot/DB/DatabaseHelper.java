@@ -20,10 +20,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String TAG = DatabaseHelper.class.getSimpleName();
 
-    //имя файла базы данных который будет храниться в /data/data/APPNAME/DATABASE_NAME.db
     private static final String DATABASE_NAME ="foresquarePizza.db";
 
-    //с каждым увеличением версии, при нахождении в устройстве БД с предыдущей версией будет выполнен метод onUpgrade();
     private static final int DATABASE_VERSION = 1;
 
     private Dao<VenueData, Integer> venueDao = null;
@@ -33,7 +31,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         super(context,DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    //Выполняется, когда файл с БД не найден на устройстве
     @Override
     public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource){
         try
@@ -47,12 +44,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    //Выполняется, когда БД имеет версию отличную от текущей
     @Override
     public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVer,
                           int newVer){
         try{
-            //Так делают ленивые, гораздо предпочтительнее не удаляя БД аккуратно вносить изменения
             TableUtils.dropTable(connectionSource, VenueData.class, true);
             TableUtils.dropTable(connectionSource, LocationData.class, true);
             onCreate(db, connectionSource);
@@ -63,14 +58,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    //синглтон для VenueDAO
     public Dao<VenueData, Integer> getVenueDAO() throws Exception{
         if(venueDao == null){
             venueDao = getDao(VenueData.class);
         }
         return venueDao;
     }
-    //синглтон для LocationDAO
     public Dao<LocationData, Integer> getLocationDAO() throws Exception{
         if(locationDao == null){
             locationDao = getDao(LocationData.class);
@@ -78,7 +71,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         return locationDao;
     }
 
-    //выполняется при закрытии приложения
     @Override
     public void close(){
         super.close();

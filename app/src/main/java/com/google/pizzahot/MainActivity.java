@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 import android.content.BroadcastReceiver;
 
@@ -29,7 +30,7 @@ public class MainActivity extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         HelperFactory.setHelper(getApplicationContext());
-        setContentView(com.google.pizzahot.R.layout.activity_main);
+        setContentView(R.layout.activity_main);
 
         if (isOnline()){
            this.startService(new Intent(this, CallService.class));
