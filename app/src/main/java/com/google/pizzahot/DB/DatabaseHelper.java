@@ -1,13 +1,11 @@
 package com.google.pizzahot.DB;
 
 import android.content.Context;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.google.pizzahot.DB.tables.LocationTable;
-import com.google.pizzahot.DB.tables.VenueTable;
-import com.google.pizzahot.model.Venue;
+import com.google.pizzahot.DB.tables.LocationData;
+import com.google.pizzahot.DB.tables.VenueData;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
@@ -27,8 +25,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     //ссылки на DAO соответсвующие сущностям, хранимым в БД
-    private VenueTable venueTable = null;
-    private LocationTable locationTable = null;
+    private VenueData venueTable = null;
+    private LocationData locationTable = null;
 
     public DatabaseHelper(Context context){
         super(context,DATABASE_NAME, null, DATABASE_VERSION);
@@ -39,8 +37,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource){
         try
         {
-            TableUtils.createTable(connectionSource, VenueTable.class);
-            TableUtils.createTable(connectionSource, LocationTable.class);
+            TableUtils.createTable(connectionSource, VenueData.class);
+            TableUtils.createTable(connectionSource, LocationData.class);
         }
         catch (Exception e){
                         Log.e(TAG, "error creating DB " + DATABASE_NAME);
@@ -54,8 +52,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                           int newVer){
         try{
             //Так делают ленивые, гораздо предпочтительнее не удаляя БД аккуратно вносить изменения
-            TableUtils.dropTable(connectionSource, VenueTable.class, true);
-            TableUtils.dropTable(connectionSource, LocationTable.class, true);
+            TableUtils.dropTable(connectionSource, VenueData.class, true);
+            TableUtils.dropTable(connectionSource, LocationData.class, true);
             onCreate(db, connectionSource);
         }
         catch (Exception e){
@@ -65,16 +63,16 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
     //синглтон для GoalDAO
-    public VenueTable getVenueDAO() throws Exception{
+    public VenueData getVenueDAO() throws Exception{
         if(venueTable == null){
-            venueTable = getDao(VenueTable.class);
+            venueTable = getDao(VenueData.class);
         }
         return venueTable;
     }
     //синглтон для RoleDAO
-    public LocationTable getLocationDAO() throws Exception{
+    public LocationData getLocationDAO() throws Exception{
         if(locationTable == null){
-            locationTable = getDao(LocationTable.class);
+            locationTable = getDao(LocationData.class);
         }
         return locationTable;
     }

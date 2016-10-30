@@ -44,7 +44,7 @@ public class CallService extends IntentService implements LocationListener {
     private LocationManager locationManager;
     private Location location;
     private double latitude;
-    private double longtitude;
+    private double longitude;
 
 
     public CallService() {
@@ -52,26 +52,36 @@ public class CallService extends IntentService implements LocationListener {
     }
 
 
-    public Location getLocation() {
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-        }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-        return location;
-    }
-
-
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        String url = "https://api.foursquare.com/v2/venues/search?client_id="
-                + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&v=" + VERSION + "&limit=" + LIMIT + "&ll=" + latitude + "," + longtitude + "&query=" + QUERY;
+        getMyLocation();
 
         latitude = location.getLatitude();
-        longtitude = location.getLongitude();
+        longitude = location.getLongitude();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        locationManager.removeUpdates(this);
+        getJSON();
+        sendBroadcast();
+    }
 
+    public void getMyLocation() {
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+             }
+        locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                0,
+                0, this);
+    }
+
+
+    public void getJSON(){
+        String url = "https://api.foursquare.com/v2/venues/search?client_id="
+                + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&v=" + VERSION + "&limit=" + LIMIT + "&ll=" + latitude + "," + longitude + "&query=" + QUERY;
         OkHttpClient client = new OkHttpClient();
         String jsonBody = null;
         Response response;
@@ -85,13 +95,8 @@ public class CallService extends IntentService implements LocationListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         pizzaList = parseFoursquare(jsonBody);
-
-        sendBroadcast();
     }
-
-
 
     public void sendBroadcast(){
         Intent intent = new Intent(MainActivity.BROADCAST_ACTION);

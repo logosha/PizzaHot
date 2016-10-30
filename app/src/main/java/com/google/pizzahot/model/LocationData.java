@@ -6,17 +6,21 @@ package com.google.pizzahot.model;
 
 public class LocationData {
 
-    private double horizontalAccuracy;
+    private double distance;
 
     public LocationData() {
     }
 
-    public double getHorizontalAccuracy() {
-        return horizontalAccuracy;
+    public double getDistance() {
+        return distance;
     }
 
-    public void setHorizontalAccuracy(double horizontalAccuracy) {
-        this.horizontalAccuracy = horizontalAccuracy;
+    public void setDistance(double distance) {
+        this.distance = distance;
     }
+
+
+
+
 }
 
