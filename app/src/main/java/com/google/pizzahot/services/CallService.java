@@ -62,22 +62,24 @@ public class CallService extends IntentService implements LocationListener {
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             locationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER,
-                    0,
-                    0, this);
+                        LocationManager.GPS_PROVIDER,
+                        0,
+                        0, this);
+
         } else {
+            Log.d(TAG, String.valueOf(locationManager.isProviderEnabled(locationManager.GPS_PROVIDER)));
             latitude = latitudeNY;
             longitude = longitudeNY;
-
-            startForsquareCommunication();
+            getJSON();
+            sendBroadcast();
         }
     }
 
     public void startForsquareCommunication() {
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
-        getJSON();
-        sendBroadcast();
+         latitude = location.getLatitude();
+         longitude = location.getLongitude();
+         getJSON();
+         sendBroadcast();
     }
 
     public void getJSON() {
