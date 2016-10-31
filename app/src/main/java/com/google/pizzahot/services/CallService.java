@@ -13,6 +13,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.pizzahot.DB.HelperFactory;
 import com.google.pizzahot.MainActivity;
 import com.google.pizzahot.model.FoursquareResponse;
 import com.google.pizzahot.model.FoursquareRestaurant;
@@ -26,25 +27,23 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 
-public class CallService extends IntentService implements LocationListener {
+public class CallService extends IntentService {
 
     private static final String CLIENT_ID = "ZURIFJGOKBITYRPLBHZHRSXTHAFGYADA52RJRG5HHJPNVKXS";
     private static final String CLIENT_SECRET = "ZV21NT0DOHPKTKURHHOYNABHG14CLQ32J0WIQAADKZBQFNCH";
     private static final String VERSION = "20130815";
     private static final String LIMIT = "10";
     private static final String QUERY = "pizza";
-    private static final double latitudeNY = 40.7463956;
-    private static final double longitudeNY = -73.9852992;
+
     private static final String TAG = "myLogs";
 
 
     private static final Gson jsonMarshaller = new GsonBuilder().create();
     ArrayList<FoursquareRestaurant> pizzaList;
 
-    private LocationManager locationManager;
-    private Location location;
+
     private double latitude;
-    private double longitude;
+    private double longtitude;
 
 
     public CallService() {
@@ -54,37 +53,15 @@ public class CallService extends IntentService implements LocationListener {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        getMyLocation();
+        latitude = intent.getDoubleExtra("lat", MainActivity.latitudeNY);
+        longtitude = intent.getDoubleExtra("lat", MainActivity.longitudeNY);
+        sendRequest();
     }
 
-    public void getMyLocation() {
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            locationManager.requestLocationUpdates(
-                        LocationManager.GPS_PROVIDER,
-                        0,
-                        0, this);
-
-        } else {
-            Log.d(TAG, String.valueOf(locationManager.isProviderEnabled(locationManager.GPS_PROVIDER)));
-            latitude = latitudeNY;
-            longitude = longitudeNY;
-            getJSON();
-            sendBroadcast();
-        }
-    }
-
-    public void startForsquareCommunication() {
-         latitude = location.getLatitude();
-         longitude = location.getLongitude();
-         getJSON();
-         sendBroadcast();
-    }
-
-    public void getJSON() {
+    private void sendRequest() {
         String url = "https://api.foursquare.com/v2/venues/search?client_id="
-                + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&v=" + VERSION + "&limit=" + LIMIT + "&ll=" + latitude + "," + longitude + "&query=" + QUERY;
+                + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&v=" + VERSION + "&limit=" + LIMIT + "&ll=" + latitude + "," + longtitude + "&query=" + QUERY;
+
         OkHttpClient client = new OkHttpClient();
         String jsonBody = null;
         Response response;
@@ -95,11 +72,14 @@ public class CallService extends IntentService implements LocationListener {
 
             response = client.newCall(request).execute();
             jsonBody = response.body().string();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-        pizzaList = parseFoursquare(jsonBody);
+
+        parseFoursquare(jsonBody);
     }
+
 
     public void sendBroadcast() {
         Intent intent = new Intent(MainActivity.BROADCAST_ACTION);
@@ -107,9 +87,7 @@ public class CallService extends IntentService implements LocationListener {
         sendBroadcast(intent);
     }
 
-    private static ArrayList<FoursquareRestaurant> parseFoursquare(String response) {
-
-        ArrayList<FoursquareRestaurant> temp = new ArrayList<FoursquareRestaurant>();
+    public void parseFoursquare(String response) {
 
         FoursquareResponse resp = jsonMarshaller.fromJson(response, FoursquareResponse.class);
 
@@ -117,41 +95,16 @@ public class CallService extends IntentService implements LocationListener {
             if (resp.getResponse() != null
                     && resp.getResponse().getVenues() != null
                     && resp.getResponse().getVenues().length > 0) {
-                Venue[] venues = resp.getResponse().getVenues();
-                for (int i = 0; i < venues.length; i++) {
-                    Log.d(TAG, "Distance: " + venues[i].getLocation().getCountry());
-                }
+                HelperFactory.getInstance(this).addVenues(resp);
+                HelperFactory.getInstance(this).getLists();
+                sendBroadcast();
             } else {
-                // TODO сообщить что новых результатов нет
-            }
-        } else {
-            // TODO убрать прогресс, сообщить об ошибке.
+            // TODO сообщить что новы   х результатов нет
         }
-
-        return null;
+    } else {
+        // TODO убрать прогресс, сообщить об ошибке.
     }
 
-
-    @Override
-    public void onLocationChanged(Location location) {
-        this.location = location;
-        startForsquareCommunication();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            locationManager.removeUpdates(this);
-        }
     }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-    }
-
 
 }
