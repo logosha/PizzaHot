@@ -1,13 +1,11 @@
 package com.google.pizzahot;
 
 import android.Manifest;
-import android.app.ListActivity;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -15,19 +13,25 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 import android.content.BroadcastReceiver;
 
-import com.google.pizzahot.DB.DatabaseHelper;
-import com.google.pizzahot.DB.HelperFactory;
+import com.google.pizzahot.DB.DatabaseCommunication;
+import com.google.pizzahot.DB.tables.VenueData;
 import com.google.pizzahot.services.CallService;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
-public class MainActivity extends ListActivity implements LocationListener {
 
-    ArrayAdapter<String> myAdapter;
+public class MainActivity extends Activity implements LocationListener {
+
+    ArrayAdapter<VenueData> myAdapter;
     BroadcastReceiver broadcastReceiver;
     public final static String BROADCAST_ACTION = "com.google.pizzahot";
     public final static String PARAM_RESULT = "result";
@@ -42,14 +46,17 @@ public class MainActivity extends ListActivity implements LocationListener {
 
     private LocationManager locationManager;
     private Location location;
-    DatabaseHelper databaseHelper;
+    private ListView listView;
+    List<VenueData> pizzaList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        HelperFactory.getInstance(this);
-        setContentView(com.google.pizzahot.R.layout.activity_main);
-
+        DatabaseCommunication.getInstance(this);
+        setContentView(R.layout.activity_main);
+        listView = (ListView) findViewById(R.id.paging_list_view);
+        getLocation();
         broadcastReceiver = new BroadcastReceiver() {
 
             public void onReceive(Context context, Intent intent) {
@@ -68,14 +75,22 @@ public class MainActivity extends ListActivity implements LocationListener {
 
         IntentFilter intFilt = new IntentFilter(BROADCAST_ACTION);
         registerReceiver(broadcastReceiver, intFilt);
+        DatabaseCommunication.getInstance(this).getLists();
 
-        databaseHelper = new DatabaseHelper(this);
-        SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        pizzaList = DatabaseCommunication.getInstance(this).getLists();
+        Collections.sort(pizzaList, VenueData.VenueDistanceComparator);
+
+        List listTitle = new ArrayList();
+        for (int i = 0; i < pizzaList.size(); i++) {
+            listTitle.add(i, pizzaList.get(i).getName() + ", " +  pizzaList.get(i).getDistance() +"m");
+        }
+
+
+         myAdapter = new ArrayAdapter(this, R.layout.row_layout, R.id.listText, listTitle);
+         listView.setAdapter(myAdapter);
 
 
     }
-
-
 
 
     private void getLocation() {
@@ -83,20 +98,11 @@ public class MainActivity extends ListActivity implements LocationListener {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+
         }
     }
 
-
-
- /*   List<String> listTitle = new ArrayList<String>();
-
-    for (int i = 0; i < pizzaList.size(); i++) {
-        listTitle.add(i, pizzaList.get(i).getName() + ", " + pizzaList.get(i).getDistance());
-    }
-
-    myAdapter = new ArrayAdapter<>(this, com.google.pizzahot.R.layout.row_layout, com.google.pizzahot.R.id.listText, listTitle);
-    setListAdapter(myAdapter);
-*/
 
     public boolean isOnline() {
         ConnectivityManager cm =
@@ -105,9 +111,10 @@ public class MainActivity extends ListActivity implements LocationListener {
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
+
     @Override
     protected void onDestroy() {
-        HelperFactory.releaseHelper();
+        DatabaseCommunication.releaseHelper();
         unregisterReceiver(broadcastReceiver);
         super.onDestroy();
     }
@@ -147,4 +154,6 @@ public class MainActivity extends ListActivity implements LocationListener {
     @Override
     public void onProviderDisabled(String provider) {
     }
+
+
 }

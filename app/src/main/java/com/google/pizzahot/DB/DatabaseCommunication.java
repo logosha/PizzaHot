@@ -5,7 +5,6 @@ import android.util.Log;
 
 import com.google.pizzahot.DB.tables.VenueData;
 import com.google.pizzahot.model.FoursquareResponse;
-import com.google.pizzahot.model.Location;
 import com.google.pizzahot.model.Venue;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
@@ -16,9 +15,9 @@ import java.util.List;
  * Created by Алексей on 28.10.2016.
  */
 
-public class HelperFactory {
+public class DatabaseCommunication {
 
-    private static HelperFactory instance;
+    private static DatabaseCommunication instance;
     private DatabaseHelper databaseHelper;
     private static final String TAG = "myLogs";
 
@@ -26,9 +25,10 @@ public class HelperFactory {
     private DatabaseHelper getHelper(){
         return databaseHelper;
     }
-    public static HelperFactory getInstance(Context context){
+
+    public static DatabaseCommunication getInstance(Context context){
         if(instance == null){
-            instance = new HelperFactory();
+            instance = new DatabaseCommunication();
         }
         if(instance.databaseHelper == null) {
             instance.databaseHelper = OpenHelperManager.getHelper(context, DatabaseHelper.class);
@@ -40,18 +40,6 @@ public class HelperFactory {
         instance.databaseHelper = null;
     }
 
-    public List<VenueData> getAllLists() {
-        getHelper();
-        List<VenueData> result = null;
-        try {
-            Dao<VenueData, Integer> dao = databaseHelper.getVenueDAO();
-            result = dao.queryForAll();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
     public void addVenues(FoursquareResponse foursquareResponse) {
         getHelper();
         for(Venue venue:foursquareResponse.getResponse().getVenues()) {
@@ -60,7 +48,6 @@ public class HelperFactory {
     }
 
     private VenueData addVenueData(Venue venue) {
-        getHelper();
         try {
             Dao<VenueData, Integer> dao = databaseHelper.getVenueDAO();
             VenueData vData = new VenueData(venue);
@@ -73,8 +60,7 @@ public class HelperFactory {
     }
 
     public List<VenueData> getLists() {
-        getHelper();
-        try {
+       try {
             Dao<VenueData, Integer> dao = databaseHelper.getVenueDAO();
             List<VenueData> listResult = dao.queryForAll();
             logList(listResult);

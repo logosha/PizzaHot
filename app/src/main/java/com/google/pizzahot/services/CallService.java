@@ -1,23 +1,14 @@
 package com.google.pizzahot.services;
 
-import android.Manifest;
 import android.app.IntentService;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.pizzahot.DB.HelperFactory;
+import com.google.pizzahot.DB.DatabaseCommunication;
 import com.google.pizzahot.MainActivity;
 import com.google.pizzahot.model.FoursquareResponse;
 import com.google.pizzahot.model.FoursquareRestaurant;
-import com.google.pizzahot.model.Venue;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -95,8 +86,8 @@ public class CallService extends IntentService {
             if (resp.getResponse() != null
                     && resp.getResponse().getVenues() != null
                     && resp.getResponse().getVenues().length > 0) {
-                HelperFactory.getInstance(this).addVenues(resp);
-                HelperFactory.getInstance(this).getLists();
+              //  DatabaseCommunication.getInstance(this).addVenues(resp);
+              //  DatabaseCommunication.getInstance(this).getLists();
                 sendBroadcast();
             } else {
             // TODO сообщить что новы   х результатов нет
