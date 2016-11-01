@@ -13,6 +13,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -63,11 +65,20 @@ public class MainActivity extends Activity implements LocationListener {
 
 
         listView.setAdapter(adapter);
-        listView.setHasMoreItems(true);
+            listView.setHasMoreItems(true);
         listView.setPagingableListener(new PagingListView.Pagingable() {
             @Override
             public void onLoadMoreItems() {
                 getNextPage();
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(MainActivity.this, PizzaActivity.class);
+                VenueData vd = pizzaList.get(i);
+                intent.putExtra("key", vd);
             }
         });
 

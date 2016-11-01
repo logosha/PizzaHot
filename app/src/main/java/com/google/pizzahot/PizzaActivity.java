@@ -1,8 +1,11 @@
 package com.google.pizzahot;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+
+import com.google.pizzahot.DB.tables.VenueData;
 
 public class PizzaActivity extends AppCompatActivity {
 
@@ -13,15 +16,21 @@ public class PizzaActivity extends AppCompatActivity {
 
         TextView tvName = (TextView) findViewById(R.id.venue_name);
         TextView tvDistance = (TextView) findViewById(R.id.venue_distance);
-        TextView tvCity = (TextView) findViewById(R.id.venue_city);
+        TextView tvLatCity = (TextView) findViewById(R.id.venue_city);
         TextView tvCountry = (TextView) findViewById(R.id.venue_country);
-        TextView tvPostalCode = (TextView) findViewById(R.id.venue_postal_code);
+        TextView tvPost = (TextView) findViewById(R.id.venue_post);
 
-        tvName.setText("");
-        tvDistance.setText("");
-        tvCity.setText("");
-        tvCountry.setText("");
-        tvPostalCode.setText("");
+
+
+        Intent intent = this.getIntent();
+        VenueData value = (VenueData)intent.getSerializableExtra("key");
+       
+        tvName.setText(value.getName());
+        tvDistance.setText((int) value.getDistance());
+        tvLatCity.setText(value.getCity());
+        tvCountry.setText(value.getCountry());
+        tvPost.setText((int) value.getPostalCode());
+
 
     }
 }

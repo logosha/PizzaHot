@@ -38,7 +38,7 @@
     </TextView>
 
     <TextView
-        android:id="@+id/venue_postal_code"
+        android:id="@+id/venue_post"
         android:layout_marginTop="10sp"
         android:textSize="20sp"
         android:layout_width="match_parent"
