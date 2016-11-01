@@ -86,7 +86,7 @@ public class CallService extends IntentService {
             if (resp.getResponse() != null
                     && resp.getResponse().getVenues() != null
                     && resp.getResponse().getVenues().length > 0) {
-              //  DatabaseCommunication.getInstance(this).addVenues(resp);
+                DatabaseCommunication.getInstance(this).addVenues(resp);
               //  DatabaseCommunication.getInstance(this).getLists();
                 sendBroadcast();
             } else {

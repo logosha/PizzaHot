@@ -20,7 +20,9 @@ import android.content.BroadcastReceiver;
 
 import com.google.pizzahot.DB.DatabaseCommunication;
 import com.google.pizzahot.DB.tables.VenueData;
+import com.google.pizzahot.adapters.MyPagingAdaper;
 import com.google.pizzahot.services.CallService;
+import com.paging.listview.PagingListView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +33,8 @@ import java.util.List;
 
 public class MainActivity extends Activity implements LocationListener {
 
-    ArrayAdapter<VenueData> myAdapter;
+    private PagingListView listView;
+    private MyPagingAdaper adapter;
     BroadcastReceiver broadcastReceiver;
     public final static String BROADCAST_ACTION = "com.google.pizzahot";
     public final static String PARAM_RESULT = "result";
@@ -43,10 +46,10 @@ public class MainActivity extends Activity implements LocationListener {
 
     private static final String TAG = "myLogs";
 
+    int offset, limit;
 
     private LocationManager locationManager;
     private Location location;
-    private ListView listView;
     List<VenueData> pizzaList;
 
 
@@ -55,7 +58,19 @@ public class MainActivity extends Activity implements LocationListener {
         super.onCreate(savedInstanceState);
         DatabaseCommunication.getInstance(this);
         setContentView(R.layout.activity_main);
-        listView = (ListView) findViewById(R.id.paging_list_view);
+        listView = (PagingListView) findViewById(R.id.paging_list_view);
+        adapter = new MyPagingAdaper();
+
+
+        listView.setAdapter(adapter);
+        listView.setHasMoreItems(true);
+        listView.setPagingableListener(new PagingListView.Pagingable() {
+            @Override
+            public void onLoadMoreItems() {
+                getNextPage();
+            }
+        });
+
         getLocation();
         broadcastReceiver = new BroadcastReceiver() {
 
@@ -65,6 +80,7 @@ public class MainActivity extends Activity implements LocationListener {
                 switch (result) {
                     case STATUS_FINISH_SUCCESS:
                         Toast.makeText(MainActivity.this, "Information added to the database", Toast.LENGTH_LONG).show();
+                        listView.onFinishLoading(false, null);
                         break;
                     case STATUS_FINISH_FAIL:
                         Toast.makeText(MainActivity.this, "Information not added to the database", Toast.LENGTH_LONG).show();
@@ -75,10 +91,12 @@ public class MainActivity extends Activity implements LocationListener {
 
         IntentFilter intFilt = new IntentFilter(BROADCAST_ACTION);
         registerReceiver(broadcastReceiver, intFilt);
+
+      /*
         DatabaseCommunication.getInstance(this).getLists();
 
         pizzaList = DatabaseCommunication.getInstance(this).getLists();
-        Collections.sort(pizzaList, VenueData.VenueDistanceComparator);
+          Collections.sort(pizzaList, VenueData.VenueDistanceComparator);
 
         List listTitle = new ArrayList();
         for (int i = 0; i < pizzaList.size(); i++) {
@@ -89,6 +107,21 @@ public class MainActivity extends Activity implements LocationListener {
          myAdapter = new ArrayAdapter(this, R.layout.row_layout, R.id.listText, listTitle);
          listView.setAdapter(myAdapter);
 
+*/
+    }
+
+    private void getNextPage() {
+        List list = DatabaseCommunication.getInstance(this).getOffsetLimitLists(offset, limit);
+        if (list.isEmpty()){
+            if (isOnline()){
+                this.startService(new Intent(this, CallService.class));
+            }else{
+                Toast.makeText(this, "Internet Connection Not Available", Toast.LENGTH_LONG).show();
+            }
+        } else {
+
+
+        }
 
     }
 

@@ -9,6 +9,7 @@ import com.google.pizzahot.model.Venue;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,6 +52,7 @@ public class DatabaseCommunication {
         try {
             Dao<VenueData, Integer> dao = databaseHelper.getVenueDAO();
             VenueData vData = new VenueData(venue);
+
             dao.create(vData);
             return vData;
         } catch (Exception e) {
@@ -58,6 +60,8 @@ public class DatabaseCommunication {
             return null;
         }
     }
+
+
 
     public List<VenueData> getLists() {
        try {
@@ -68,7 +72,6 @@ public class DatabaseCommunication {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //		ForeignCollection<VenueData> page = listResult.get(arg0).getPages();
         return null;
     }
 
@@ -81,5 +84,9 @@ public class DatabaseCommunication {
         } else {
             Log.e(TAG,"lists isEmpty or Null");
         }
+    }
+
+    public List<VenueData> getOffsetLimitLists(int offset, int limit) {
+        return new ArrayList<VenueData>();
     }
 }

@@ -15,10 +15,9 @@ import com.paging.listview.PagingBaseAdapter;
 
 public class MyPagingAdaper extends PagingBaseAdapter<String> {
 
-
     @Override
     public int getCount() {
-        return 0;
+        return items.size();
     }
 
     @Override
