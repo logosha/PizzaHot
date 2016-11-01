@@ -36,47 +36,7 @@ public class VenueData implements Comparable<VenueData>, Serializable {
     private String country;
 
     @DatabaseField
-    private double postalCode;
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public double getPostalCode() {
-        return postalCode;
-    }
-
-    public VenueData(String city, String country, double distance, int id, double latitude, double longitude, String name, int postalCode) {
-        this.city = city;
-        this.country = country;
-        this.distance = distance;
-        this.id = id;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.name = name;
-        this.postalCode = postalCode;
-    }
-
-    public VenueData() {
-    }
-
-    @Override
-    public String toString() {
-        return "VenueData{" +
-                "city='" + city + '\'' +
-                ", id=" + id +
-                ", name='" + name + '\'' +
-                ", distance=" + distance +
-                ", latitude=" + latitude +
-                ", longitude=" + longitude +
-                ", country='" + country + '\'' +
-                ", postalCode=" + postalCode +
-                '}';
-    }
+    private String postalCode;
 
     public double getDistance() {
         return distance;
@@ -96,6 +56,45 @@ public class VenueData implements Comparable<VenueData>, Serializable {
 
     public String getName() {
         return name;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public VenueData(Venue venue) {
+        this.city = venue.getLocation().getCity();
+        this.country = venue.getLocation().getCountry();
+        this.distance = venue.getLocation().getDistance();
+        this.latitude = venue.getLocation().getLat();
+        this.longitude = venue.getLocation().getLng();
+        this.name = venue.getName();
+        this.postalCode = venue.getLocation().getPostalCode();
+    }
+
+    public VenueData() {
+    }
+
+    @Override
+    public String toString() {
+        return "VenueData{" +
+                "city='" + city + '\'' +
+                ", id=" + id +
+                ", name='" + name + '\'' +
+                ", distance=" + distance +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", country='" + country + '\'' +
+                ", postalCode=" + postalCode +
+                '}';
     }
 
     @Override

@@ -61,7 +61,9 @@ public class MainActivity extends Activity implements LocationListener {
         DatabaseCommunication.getInstance(this);
         setContentView(R.layout.activity_main);
         listView = (PagingListView) findViewById(R.id.paging_list_view);
-        adapter = new MyPagingAdaper();
+        pizzaList = DatabaseCommunication.getInstance(this).getLists();
+
+        adapter = new MyPagingAdaper(pizzaList);
 
 
         listView.setAdapter(adapter);
@@ -83,6 +85,7 @@ public class MainActivity extends Activity implements LocationListener {
         });
 
         getLocation();
+
         broadcastReceiver = new BroadcastReceiver() {
 
             public void onReceive(Context context, Intent intent) {

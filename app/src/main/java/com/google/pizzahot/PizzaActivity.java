@@ -29,7 +29,7 @@ public class PizzaActivity extends AppCompatActivity {
         tvDistance.setText((int) value.getDistance());
         tvLatCity.setText(value.getCity());
         tvCountry.setText(value.getCountry());
-        tvPost.setText((int) value.getPostalCode());
+        tvPost.setText(value.getPostalCode());
 
 
     }
