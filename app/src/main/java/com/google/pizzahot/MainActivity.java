@@ -45,10 +45,11 @@ public class MainActivity extends Activity implements LocationListener {
 
     public static final double latitudeNY = 40.7463956;
     public static final double longitudeNY = -73.9852992;
+    public static final int LIMIT = 10;
 
     private static final String TAG = "myLogs";
 
-    int offset, limit;
+
 
     private LocationManager locationManager;
     private Location location;
@@ -61,19 +62,20 @@ public class MainActivity extends Activity implements LocationListener {
         DatabaseCommunication.getInstance(this);
         setContentView(R.layout.activity_main);
         listView = (PagingListView) findViewById(R.id.paging_list_view);
-        pizzaList = DatabaseCommunication.getInstance(this).getLists();
+
+        if(!isOnline()){
+            pizzaList = DatabaseCommunication.getInstance(this).getLists();
+        } else {
+            pizzaList = new ArrayList<>();
+        }
+
 
         adapter = new MyPagingAdaper(pizzaList);
 
 
         listView.setAdapter(adapter);
-            listView.setHasMoreItems(true);
-        listView.setPagingableListener(new PagingListView.Pagingable() {
-            @Override
-            public void onLoadMoreItems() {
-                getNextPage();
-            }
-        });
+        listView.setHasMoreItems(true);
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -81,6 +83,7 @@ public class MainActivity extends Activity implements LocationListener {
                 Intent intent = new Intent(MainActivity.this, PizzaActivity.class);
                 VenueData vd = pizzaList.get(i);
                 intent.putExtra("key", vd);
+                startActivity(intent);
             }
         });
 
@@ -94,10 +97,21 @@ public class MainActivity extends Activity implements LocationListener {
                 switch (result) {
                     case STATUS_FINISH_SUCCESS:
                         Toast.makeText(MainActivity.this, "Information added to the database", Toast.LENGTH_LONG).show();
-                        listView.onFinishLoading(false, null);
+                        List<VenueData> list;
+                        list = DatabaseCommunication.getInstance(MainActivity.this).getOffsetLimitLists(pizzaList.size(), LIMIT);
+                        pizzaList.addAll(list);
+                        adapter.addItems(list);
+                        listView.onFinishLoading(true, null);
+                        listView.setPagingableListener(new PagingListView.Pagingable() {
+                            @Override
+                            public void onLoadMoreItems() {
+                                getNextPage();
+                            }
+                        });
                         break;
                     case STATUS_FINISH_FAIL:
                         Toast.makeText(MainActivity.this, "Information not added to the database", Toast.LENGTH_LONG).show();
+                        listView.onFinishLoading(true, null);
                         break;
                 }
             }
@@ -107,34 +121,25 @@ public class MainActivity extends Activity implements LocationListener {
         registerReceiver(broadcastReceiver, intFilt);
 
       /*
-        DatabaseCommunication.getInstance(this).getLists();
-
-        pizzaList = DatabaseCommunication.getInstance(this).getLists();
           Collections.sort(pizzaList, VenueData.VenueDistanceComparator);
-
-        List listTitle = new ArrayList();
-        for (int i = 0; i < pizzaList.size(); i++) {
-            listTitle.add(i, pizzaList.get(i).getName() + ", " +  pizzaList.get(i).getDistance() +"m");
-        }
-
-
-         myAdapter = new ArrayAdapter(this, R.layout.row_layout, R.id.listText, listTitle);
-         listView.setAdapter(myAdapter);
-
-*/
+      */
     }
 
     private void getNextPage() {
-        List list = DatabaseCommunication.getInstance(this).getOffsetLimitLists(offset, limit);
+        List list = DatabaseCommunication.getInstance(this).getOffsetLimitLists(pizzaList.size(), LIMIT);
         if (list.isEmpty()){
             if (isOnline()){
+                Intent intent = new Intent(this, CallService.class);
+                intent.putExtra("lat", this.location.getLatitude());
+                intent.putExtra("lon", this.location.getLongitude());
+                intent.putExtra("offset", pizzaList.size());
                 this.startService(new Intent(this, CallService.class));
             }else{
                 Toast.makeText(this, "Internet Connection Not Available", Toast.LENGTH_LONG).show();
             }
         } else {
-
-
+            pizzaList.addAll(list);
+            listView.onFinishLoading(true, list);
         }
 
     }
@@ -180,14 +185,16 @@ public class MainActivity extends Activity implements LocationListener {
             locationManager.removeUpdates(this);
         }
 
-        Intent intent = new Intent(this, CallService.class);
-        intent.putExtra("lat", this.location.getLatitude());
-        intent.putExtra("lon", this.location.getLongitude());
-        if (isOnline()){
+            if (isOnline()){
+                Intent intent = new Intent(this, CallService.class);
+                intent.putExtra("lat", this.location.getLatitude());
+                intent.putExtra("lon", this.location.getLongitude());
+                intent.putExtra("offset", pizzaList.size());
             this.startService(new Intent(this, CallService.class));
         }else{
             Toast.makeText(this, "Internet Connection Not Available", Toast.LENGTH_LONG).show();
         }
+
     }
 
     @Override

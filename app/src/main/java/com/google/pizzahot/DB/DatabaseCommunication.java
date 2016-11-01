@@ -8,6 +8,7 @@ import com.google.pizzahot.model.FoursquareResponse;
 import com.google.pizzahot.model.Venue;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.table.TableUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +62,26 @@ public class DatabaseCommunication {
         }
     }
 
+    public List<VenueData> getOffsetLimitLists(long offset, long limit) {
+        List<VenueData> listResult = new ArrayList<VenueData>();
+        try {
+            Dao<VenueData, Integer> dao = databaseHelper.getVenueDAO();
+            listResult = dao.queryBuilder().offset(offset).limit(limit).query();
+          //  logList(listResult);
+            return listResult;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listResult;
+    }
+
+    public void clearTable(){
+        try {
+            TableUtils.clearTable(databaseHelper.getConnectionSource(), VenueData.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
     public List<VenueData> getLists() {

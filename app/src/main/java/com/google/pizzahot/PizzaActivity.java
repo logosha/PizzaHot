@@ -26,7 +26,7 @@ public class PizzaActivity extends AppCompatActivity {
         VenueData value = (VenueData)intent.getSerializableExtra("key");
        
         tvName.setText(value.getName());
-        tvDistance.setText((int) value.getDistance());
+        tvDistance.setText(""+ value.getDistance());
         tvLatCity.setText(value.getCity());
         tvCountry.setText(value.getCountry());
         tvPost.setText(value.getPostalCode());

@@ -32,7 +32,7 @@ public class CallService extends IntentService {
     private static final Gson jsonMarshaller = new GsonBuilder().create();
     ArrayList<FoursquareRestaurant> pizzaList;
 
-
+    private int offset;
     private double latitude;
     private double longtitude;
 
@@ -46,12 +46,14 @@ public class CallService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         latitude = intent.getDoubleExtra("lat", MainActivity.latitudeNY);
         longtitude = intent.getDoubleExtra("lat", MainActivity.longitudeNY);
+        offset = intent.getIntExtra("offset", 0);
         sendRequest();
     }
 
     private void sendRequest() {
+
         String url = "https://api.foursquare.com/v2/venues/search?client_id="
-                + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&v=" + VERSION + "&limit=" + LIMIT + "&ll=" + latitude + "," + longtitude + "&query=" + QUERY;
+                + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&v=" + VERSION + "&limit=" + LIMIT + "&offset=" + offset + "&ll=" + latitude + "," + longtitude + "&query=" + QUERY;
 
         OkHttpClient client = new OkHttpClient();
         String jsonBody = null;
