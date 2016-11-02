@@ -25,6 +25,9 @@ public class CallService extends IntentService {
     private static final String VERSION = "20130815";
     private static final String LIMIT = "10";
     private static final String QUERY = "pizza";
+    public final static int STATUS_FINISH_SUCCESS = 100;
+    public final static int STATUS_FINISH_FAIL = 200;
+    public final static int STATUS_END = 300;
 
     private static final String TAG = "myLogs";
 
@@ -45,7 +48,7 @@ public class CallService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         latitude = intent.getDoubleExtra("lat", MainActivity.latitudeNY);
-        longtitude = intent.getDoubleExtra("lat", MainActivity.longitudeNY);
+        longtitude = intent.getDoubleExtra("lon", MainActivity.longitudeNY);
         offset = intent.getIntExtra("offset", 0);
         sendRequest();
     }
@@ -74,9 +77,9 @@ public class CallService extends IntentService {
     }
 
 
-    public void sendBroadcast() {
+    public void sendBroadcast(int status) {
         Intent intent = new Intent(MainActivity.BROADCAST_ACTION);
-        intent.putExtra(MainActivity.PARAM_RESULT, MainActivity.STATUS_FINISH_SUCCESS);
+        intent.putExtra(MainActivity.PARAM_RESULT, status);
         sendBroadcast(intent);
     }
 
@@ -89,15 +92,12 @@ public class CallService extends IntentService {
                     && resp.getResponse().getVenues() != null
                     && resp.getResponse().getVenues().length > 0) {
                 DatabaseCommunication.getInstance(this).addVenues(resp);
-              //  DatabaseCommunication.getInstance(this).getLists();
-                sendBroadcast();
+                sendBroadcast(STATUS_FINISH_SUCCESS);
             } else {
-            // TODO сообщить что новы   х результатов нет
+                sendBroadcast(STATUS_END);
         }
     } else {
-        // TODO убрать прогресс, сообщить об ошибке.
+            sendBroadcast(STATUS_FINISH_FAIL);
+        }
     }
-
-    }
-
 }

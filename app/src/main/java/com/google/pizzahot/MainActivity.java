@@ -42,6 +42,7 @@ public class MainActivity extends Activity implements LocationListener {
     public final static String PARAM_RESULT = "result";
     public final static int STATUS_FINISH_SUCCESS = 100;
     public final static int STATUS_FINISH_FAIL = 200;
+    public final static int STATUS_END = 300;
 
     public static final double latitudeNY = 40.7463956;
     public static final double longitudeNY = -73.9852992;
@@ -69,12 +70,17 @@ public class MainActivity extends Activity implements LocationListener {
             pizzaList = new ArrayList<>();
         }
 
-
         adapter = new MyPagingAdaper(pizzaList);
-
 
         listView.setAdapter(adapter);
         listView.setHasMoreItems(true);
+
+        listView.setPagingableListener(new PagingListView.Pagingable() {
+            @Override
+            public void onLoadMoreItems() {
+                getNextPage();
+            }
+        });
 
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -100,18 +106,14 @@ public class MainActivity extends Activity implements LocationListener {
                         List<VenueData> list;
                         list = DatabaseCommunication.getInstance(MainActivity.this).getOffsetLimitLists(pizzaList.size(), LIMIT);
                         pizzaList.addAll(list);
-                        adapter.addItems(list);
-                        listView.onFinishLoading(true, null);
-                        listView.setPagingableListener(new PagingListView.Pagingable() {
-                            @Override
-                            public void onLoadMoreItems() {
-                                getNextPage();
-                            }
-                        });
+                        listView.onFinishLoading(true, list);
                         break;
                     case STATUS_FINISH_FAIL:
                         Toast.makeText(MainActivity.this, "Information not added to the database", Toast.LENGTH_LONG).show();
-                        listView.onFinishLoading(true, null);
+                        listView.onFinishLoading(false, null);
+                        break;
+                    case STATUS_END:
+                        listView.onFinishLoading(false, null);
                         break;
                 }
             }
@@ -152,9 +154,28 @@ public class MainActivity extends Activity implements LocationListener {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
 
+        } else {ActivityCompat.requestPermissions(MainActivity.this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                1);
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getLocation();
+                } else {
+                    onLocationChanged(null);
+                }
+                break;
+            }
+        }
+    }
 
     public boolean isOnline() {
         ConnectivityManager cm =
@@ -186,11 +207,12 @@ public class MainActivity extends Activity implements LocationListener {
         }
 
             if (isOnline()){
+                DatabaseCommunication.getInstance(this).clearTable();
                 Intent intent = new Intent(this, CallService.class);
                 intent.putExtra("lat", this.location.getLatitude());
                 intent.putExtra("lon", this.location.getLongitude());
                 intent.putExtra("offset", pizzaList.size());
-            this.startService(new Intent(this, CallService.class));
+            this.startService(intent);
         }else{
             Toast.makeText(this, "Internet Connection Not Available", Toast.LENGTH_LONG).show();
         }

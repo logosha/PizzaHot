@@ -38,10 +38,7 @@ public class MyPagingAdaper extends PagingBaseAdapter<VenueData> {
     }
 
 
-    public void addItems(List<VenueData> list){
-        this.items.addAll(list);
-        notifyDataSetChanged();
-    }
+
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

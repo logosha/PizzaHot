@@ -67,7 +67,7 @@ public class DatabaseCommunication {
         try {
             Dao<VenueData, Integer> dao = databaseHelper.getVenueDAO();
             listResult = dao.queryBuilder().offset(offset).limit(limit).query();
-          //  logList(listResult);
+            logList(listResult);
             return listResult;
         } catch (Exception e) {
             e.printStackTrace();
@@ -107,7 +107,5 @@ public class DatabaseCommunication {
         }
     }
 
-    public List<VenueData> getOffsetLimitLists(int offset, int limit) {
-        return new ArrayList<VenueData>();
-    }
+
 }
