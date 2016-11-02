@@ -21,16 +21,13 @@ public class PizzaActivity extends AppCompatActivity {
         TextView tvPost = (TextView) findViewById(R.id.venue_post);
 
 
-
         Intent intent = this.getIntent();
-        VenueData value = (VenueData)intent.getSerializableExtra("key");
-       
-        tvName.setText("Name - " +value.getName());
-        tvDistance.setText("Distance - " + ""+ value.getDistance());
-        tvLatCity.setText("City - " +value.getCity());
-        tvCountry.setText("Country - " +value.getCountry());
-        tvPost.setText("Postal code - " +value.getPostalCode());
+        VenueData value = (VenueData) intent.getSerializableExtra("key");
 
-
+        tvName.setText("Name - " + value.getName());
+        tvDistance.setText("Distance - " + "" + value.getDistance());
+        tvLatCity.setText("City - " + value.getCity());
+        tvCountry.setText("Country - " + value.getCountry());
+        tvPost.setText("Postal code - " + value.getPostalCode());
     }
 }

@@ -11,6 +11,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.table.TableUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -44,6 +45,9 @@ public class DatabaseCommunication {
 
     public void addVenues(FoursquareResponse foursquareResponse) {
         getHelper();
+        List venues = foursquareResponse.getResponse().getVenues();
+        Collections.sort(venues, Venue.VenueDistanceComparator);
+
         for(Venue venue:foursquareResponse.getResponse().getVenues()) {
             addVenueData(venue);
         }

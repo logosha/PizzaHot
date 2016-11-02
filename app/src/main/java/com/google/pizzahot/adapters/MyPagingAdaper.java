@@ -18,9 +18,7 @@ import java.util.List;
 
 public class MyPagingAdaper extends PagingBaseAdapter<VenueData> {
 
-    public MyPagingAdaper(List<VenueData> list){
-        this.items.addAll(list);
-    }
+
 
     @Override
     public int getCount() {

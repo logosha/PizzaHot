@@ -1,12 +1,15 @@
 package com.google.pizzahot.model;
 
+import com.google.pizzahot.DB.tables.VenueData;
+
 import java.util.ArrayList;
+import java.util.Comparator;
 
 /**
  * Created by Алексей on 28.10.2016.
  */
 
-public class Venue {
+public class Venue implements Comparable<Venue> {
 
     private String id;
 
@@ -48,4 +51,23 @@ public class Venue {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public int compareTo(Venue venue) {
+        return 0;
+    }
+
+    public static Comparator<Venue> VenueDistanceComparator
+            = new Comparator<Venue>() {
+
+        public int compare(Venue venue1, Venue venue2) {
+
+            Double venueDistance1 = venue1.getLocation().getDistance();
+            Double venueDistance2 = venue2.getLocation().getDistance();
+
+
+            return venueDistance1.compareTo(venueDistance2);
+        }
+
+    };
 }

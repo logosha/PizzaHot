@@ -1,18 +1,22 @@
 package com.google.pizzahot.model;
 
+import java.util.List;
+
 /**
  * Created by Алексей on 28.10.2016.
  */
 
 public class Response {
 
-    private Venue [] venues;
-
-    public Venue[] getVenues() {
+    public List<Venue> getVenues() {
         return venues;
     }
 
-    public void setVenues(Venue[] venues) {
+    public void setVenues(List<Venue> venues) {
         this.venues = venues;
     }
+
+    private List<Venue> venues;
+
+
 }

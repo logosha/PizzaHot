@@ -15,8 +15,8 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.content.BroadcastReceiver;
 
@@ -27,15 +27,14 @@ import com.google.pizzahot.services.CallService;
 import com.paging.listview.PagingListView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 
 public class MainActivity extends Activity implements LocationListener {
 
     private PagingListView listView;
+    private TextView textView;
+    private Button defaultButton;
     private MyPagingAdaper adapter;
     BroadcastReceiver broadcastReceiver;
     public final static String BROADCAST_ACTION = "com.google.pizzahot";
@@ -51,7 +50,6 @@ public class MainActivity extends Activity implements LocationListener {
     private static final String TAG = "myLogs";
 
 
-
     private LocationManager locationManager;
     private Location location;
     List<VenueData> pizzaList;
@@ -63,14 +61,10 @@ public class MainActivity extends Activity implements LocationListener {
         DatabaseCommunication.getInstance(this);
         setContentView(R.layout.activity_main);
         listView = (PagingListView) findViewById(R.id.paging_list_view);
+        textView = (TextView) findViewById(R.id.default_text);
+        defaultButton = (Button) findViewById(R.id.default_button);
 
-        if(!isOnline()){
-            pizzaList = DatabaseCommunication.getInstance(this).getLists();
-        } else {
-            pizzaList = new ArrayList<>();
-        }
-
-        adapter = new MyPagingAdaper(pizzaList);
+        adapter = new MyPagingAdaper();
 
         listView.setAdapter(adapter);
         listView.setHasMoreItems(true);
@@ -78,10 +72,11 @@ public class MainActivity extends Activity implements LocationListener {
         listView.setPagingableListener(new PagingListView.Pagingable() {
             @Override
             public void onLoadMoreItems() {
-                getNextPage();
+                if (location != null) {
+                    getNextPage();
+                }
             }
         });
-
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -92,6 +87,21 @@ public class MainActivity extends Activity implements LocationListener {
                 startActivity(intent);
             }
         });
+
+        if (!isOnline()) {
+            pizzaList = DatabaseCommunication.getInstance(this).getOffsetLimitLists(0, LIMIT);
+            if (pizzaList.size() > 0) {
+                listView.onFinishLoading(true, pizzaList);
+                location = new Location("dummyprovider");
+                location.setLatitude(pizzaList.get(0).getLatitude());
+                location.setLongitude(pizzaList.get(0).getLongitude());
+            } else {
+                listView.setHasMoreItems(false);
+                textView.setVisibility(View.VISIBLE);
+            }
+        } else {
+            pizzaList = new ArrayList<>();
+        }
 
         getLocation();
 
@@ -122,28 +132,27 @@ public class MainActivity extends Activity implements LocationListener {
         IntentFilter intFilt = new IntentFilter(BROADCAST_ACTION);
         registerReceiver(broadcastReceiver, intFilt);
 
-      /*
-          Collections.sort(pizzaList, VenueData.VenueDistanceComparator);
-      */
+        defaultButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isOnline()) {
+                    DatabaseCommunication.getInstance(MainActivity.this).clearTable();
+                    onLocationChanged(null);
+                }
+            }
+        });
+
+
     }
 
     private void getNextPage() {
         List list = DatabaseCommunication.getInstance(this).getOffsetLimitLists(pizzaList.size(), LIMIT);
-        if (list.isEmpty()){
-            if (isOnline()){
-                Intent intent = new Intent(this, CallService.class);
-                intent.putExtra("lat", this.location.getLatitude());
-                intent.putExtra("lon", this.location.getLongitude());
-                intent.putExtra("offset", pizzaList.size());
-                this.startService(new Intent(this, CallService.class));
-            }else{
-                Toast.makeText(this, "Internet Connection Not Available", Toast.LENGTH_LONG).show();
-            }
+        if (list.isEmpty()) {
+            listView.onFinishLoading(false, null);
         } else {
             pizzaList.addAll(list);
             listView.onFinishLoading(true, list);
         }
-
     }
 
 
@@ -154,9 +163,10 @@ public class MainActivity extends Activity implements LocationListener {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
 
-        } else {ActivityCompat.requestPermissions(MainActivity.this,
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                1);
+        } else {
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    1);
         }
     }
 
@@ -165,7 +175,6 @@ public class MainActivity extends Activity implements LocationListener {
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
             case 1: {
-                // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     getLocation();
@@ -206,14 +215,14 @@ public class MainActivity extends Activity implements LocationListener {
             locationManager.removeUpdates(this);
         }
 
-            if (isOnline()){
-                DatabaseCommunication.getInstance(this).clearTable();
-                Intent intent = new Intent(this, CallService.class);
-                intent.putExtra("lat", this.location.getLatitude());
-                intent.putExtra("lon", this.location.getLongitude());
-                intent.putExtra("offset", pizzaList.size());
+        if (isOnline()) {
+            DatabaseCommunication.getInstance(this).clearTable();
+            Intent intent = new Intent(this, CallService.class);
+            intent.putExtra("lat", this.location.getLatitude());
+            intent.putExtra("lon", this.location.getLongitude());
+            intent.putExtra("offset", pizzaList.size());
             this.startService(intent);
-        }else{
+        } else {
             Toast.makeText(this, "Internet Connection Not Available", Toast.LENGTH_LONG).show();
         }
 

@@ -18,23 +18,21 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String TAG = "myLogs";
 
-    private static final String DATABASE_NAME ="foresquarePizza.db";
+    private static final String DATABASE_NAME = "foresquarePizza.db";
 
     private static final int DATABASE_VERSION = 1;
 
     private Dao<VenueData, Integer> venueDao = null;
 
-    public DatabaseHelper(Context context){
+    public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
-    public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource){
-        try
-        {
+    public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {
+        try {
             TableUtils.createTable(connectionSource, VenueData.class);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             Log.e(TAG, "error creating DB " + DATABASE_NAME);
             throw new RuntimeException(e);
         }
@@ -42,26 +40,25 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVer,
-                          int newVer){
-        try{
+                          int newVer) {
+        try {
             TableUtils.dropTable(connectionSource, VenueData.class, true);
             onCreate(db, connectionSource);
-        }
-        catch (Exception e){
-            Log.e(TAG,"error upgrading db "+DATABASE_NAME+"from ver "+oldVer);
+        } catch (Exception e) {
+            Log.e(TAG, "error upgrading db " + DATABASE_NAME + "from ver " + oldVer);
             throw new RuntimeException(e);
         }
     }
 
-    public Dao<VenueData, Integer> getVenueDAO() throws Exception{
-        if(venueDao == null){
+    public Dao<VenueData, Integer> getVenueDAO() throws Exception {
+        if (venueDao == null) {
             venueDao = getDao(VenueData.class);
         }
         return venueDao;
     }
 
     @Override
-    public void close(){
+    public void close() {
         super.close();
         venueDao = null;
     }
