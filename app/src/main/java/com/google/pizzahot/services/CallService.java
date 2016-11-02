@@ -2,17 +2,13 @@ package com.google.pizzahot.services;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.pizzahot.DB.DatabaseCommunication;
 import com.google.pizzahot.MainActivity;
 import com.google.pizzahot.model.FoursquareResponse;
-import com.google.pizzahot.model.FoursquareRestaurant;
-
 import java.io.IOException;
-import java.util.ArrayList;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -32,9 +28,7 @@ public class CallService extends IntentService {
 
     private static final String TAG = "myLogs";
 
-
     private static final Gson jsonMarshaller = new GsonBuilder().create();
-    ArrayList<FoursquareRestaurant> pizzaList;
 
     private int offset;
     private double latitude;
@@ -84,11 +78,7 @@ public class CallService extends IntentService {
         sendBroadcast(intent);
     }
 
-       /*
-          Collections.sort(pizzaList, VenueData.VenueDistanceComparator);
-      */
-
-    public void parseFoursquare(String response) {
+        public void parseFoursquare(String response) {
 
         FoursquareResponse resp = jsonMarshaller.fromJson(response, FoursquareResponse.class);
 

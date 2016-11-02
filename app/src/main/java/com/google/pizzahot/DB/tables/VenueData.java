@@ -12,7 +12,7 @@ import java.util.Comparator;
  */
 
 @DatabaseTable(tableName = "venue")
-public class VenueData implements Comparable<VenueData>, Serializable {
+public class VenueData implements Serializable {
 
     @DatabaseField(generatedId = true)
     private int id;
@@ -96,24 +96,5 @@ public class VenueData implements Comparable<VenueData>, Serializable {
                 ", postalCode=" + postalCode +
                 '}';
     }
-
-    @Override
-    public int compareTo(VenueData venueData) {
-        return 0;
-    }
-
-    public static Comparator<VenueData> VenueDistanceComparator
-            = new Comparator<VenueData>() {
-
-        public int compare(VenueData venue1, VenueData venue2) {
-
-            Double venueDistance1 = venue1.getDistance();
-            Double venueDistance2 = venue2.getDistance();
-
-
-            return venueDistance1.compareTo(venueDistance2);
-        }
-
-    };
 
 }

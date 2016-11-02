@@ -137,6 +137,7 @@ public class MainActivity extends Activity implements LocationListener {
             public void onClick(View view) {
                 if (isOnline()) {
                     DatabaseCommunication.getInstance(MainActivity.this).clearTable();
+                    adapter.removeAllItems();
                     onLocationChanged(null);
                 }
             }

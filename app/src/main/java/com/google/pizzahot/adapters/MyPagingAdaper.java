@@ -9,9 +9,6 @@ import android.widget.TextView;
 import com.google.pizzahot.DB.tables.VenueData;
 import com.paging.listview.PagingBaseAdapter;
 
-import java.util.List;
-
-
 /**
  * Created by Алексей on 31.10.2016.
  */
