@@ -68,7 +68,6 @@ public class MainActivity extends Activity implements LocationListener {
 
         listView.setAdapter(adapter);
         listView.setHasMoreItems(true);
-
         listView.setPagingableListener(new PagingListView.Pagingable() {
             @Override
             public void onLoadMoreItems() {
@@ -112,6 +111,7 @@ public class MainActivity extends Activity implements LocationListener {
                 int result = intent.getIntExtra(PARAM_RESULT, 0);
                 switch (result) {
                     case STATUS_FINISH_SUCCESS:
+                        listView.setHasMoreItems(true);
                         Toast.makeText(MainActivity.this, "Information added to the database", Toast.LENGTH_LONG).show();
                         List<VenueData> list;
                         list = DatabaseCommunication.getInstance(MainActivity.this).getOffsetLimitLists(pizzaList.size(), LIMIT);
@@ -136,7 +136,9 @@ public class MainActivity extends Activity implements LocationListener {
             @Override
             public void onClick(View view) {
                 if (isOnline()) {
+                    listView.setIsLoading(true);
                     DatabaseCommunication.getInstance(MainActivity.this).clearTable();
+                    pizzaList.clear();
                     adapter.removeAllItems();
                     onLocationChanged(null);
                 }
@@ -149,7 +151,7 @@ public class MainActivity extends Activity implements LocationListener {
     private void getNextPage() {
         List list = DatabaseCommunication.getInstance(this).getOffsetLimitLists(pizzaList.size(), LIMIT);
         if (list.isEmpty()) {
-            listView.onFinishLoading(false, null);
+            listView.setHasMoreItems(false);
         } else {
             pizzaList.addAll(list);
             listView.onFinishLoading(true, list);
@@ -218,6 +220,7 @@ public class MainActivity extends Activity implements LocationListener {
 
         if (isOnline()) {
             DatabaseCommunication.getInstance(this).clearTable();
+            pizzaList.clear();
             Intent intent = new Intent(this, CallService.class);
             intent.putExtra("lat", this.location.getLatitude());
             intent.putExtra("lon", this.location.getLongitude());
