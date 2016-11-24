@@ -33,10 +33,40 @@ public class VenueData implements Serializable {
     private String city;
 
     @DatabaseField
-    private String country;
+    private String url;
 
     @DatabaseField
-    private String postalCode;
+    private double rating;
+
+    @DatabaseField
+    private String phone;
+
+    @DatabaseField
+    private String address;
+
+    @DatabaseField
+    private String urlPhoto;
+
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getUrlPhoto() {
+        return urlPhoto;
+    }
 
     public double getDistance() {
         return distance;
@@ -62,22 +92,19 @@ public class VenueData implements Serializable {
         return city;
     }
 
-    public String getCountry() {
-        return country;
-    }
 
-    public String getPostalCode() {
-        return postalCode;
-    }
 
     public VenueData(Venue venue) {
         this.city = venue.getLocation().getCity();
-        this.country = venue.getLocation().getCountry();
         this.distance = venue.getLocation().getDistance();
         this.latitude = venue.getLocation().getLat();
         this.longitude = venue.getLocation().getLng();
         this.name = venue.getName();
-        this.postalCode = venue.getLocation().getPostalCode();
+        this.url = venue.getUrl();
+        this.rating = venue.getRating();
+        this.phone = venue.getContact().getPhone();
+        this.address = venue.getLocation().getAddress();
+
     }
 
     public VenueData() {
@@ -86,15 +113,17 @@ public class VenueData implements Serializable {
     @Override
     public String toString() {
         return "VenueData{" +
-                "city='" + city + '\'' +
+                "address='" + address + '\'' +
                 ", id=" + id +
                 ", name='" + name + '\'' +
                 ", distance=" + distance +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
-                ", country='" + country + '\'' +
-                ", postalCode=" + postalCode +
+                ", city='" + city + '\'' +
+                ", url='" + url + '\'' +
+                ", rating=" + rating +
+                ", phone='" + phone + '\'' +
+                ", urlPhoto='" + urlPhoto + '\'' +
                 '}';
     }
-
 }

@@ -54,7 +54,6 @@ public class MainActivity extends Activity implements LocationListener {
     private Location location;
     List<VenueData> pizzaList;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,7 +86,7 @@ public class MainActivity extends Activity implements LocationListener {
             }
         });
 
-        if (!isOnline()) {
+        if ((!isOnline())&(!isGPSEnabled())) {
             pizzaList = DatabaseCommunication.getInstance(this).getOffsetLimitLists(0, LIMIT);
             if (pizzaList.size() > 0) {
                 listView.onFinishLoading(true, pizzaList);
@@ -135,7 +134,7 @@ public class MainActivity extends Activity implements LocationListener {
         defaultButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isOnline()) {
+                if ((isOnline())||(isGPSEnabled())) {
                     listView.setIsLoading(true);
                     DatabaseCommunication.getInstance(MainActivity.this).clearTable();
                     pizzaList.clear();
@@ -196,6 +195,13 @@ public class MainActivity extends Activity implements LocationListener {
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
+    public boolean isGPSEnabled() {
+        LocationManager locationManager =
+                (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        boolean result = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        return result;
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -218,7 +224,7 @@ public class MainActivity extends Activity implements LocationListener {
             locationManager.removeUpdates(this);
         }
 
-        if (isOnline()) {
+        if ((isOnline())||(isGPSEnabled())) {
             DatabaseCommunication.getInstance(this).clearTable();
             pizzaList.clear();
             Intent intent = new Intent(this, CallService.class);
@@ -227,7 +233,7 @@ public class MainActivity extends Activity implements LocationListener {
             intent.putExtra("offset", pizzaList.size());
             this.startService(intent);
         } else {
-            Toast.makeText(this, "Internet Connection Not Available", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "No internet connection or GPS disabled", Toast.LENGTH_LONG).show();
         }
 
     }

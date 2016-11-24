@@ -8,15 +8,14 @@ import java.util.List;
 
 public class Response {
 
-    public List<Venue> getVenues() {
-        return venues;
+    private List<VenueGroup> venueGroups;
+
+    public List<VenueGroup> getVenueGroups() {
+        return venueGroups;
     }
 
-    public void setVenues(List<Venue> venues) {
-        this.venues = venues;
+    public void setVenueGroups(List<VenueGroup> venueGroups) {
+        this.venueGroups = venueGroups;
     }
-
-    private List<Venue> venues;
-
 
 }

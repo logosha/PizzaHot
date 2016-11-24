@@ -6,28 +6,23 @@ package com.google.pizzahot.model;
 public class Location {
 
 
+    private String address;
+
     private double lat;
 
     private double lng;
 
     private double distance;
 
-    private String postalCode;
-
-    private String cc;
-
     private String city;
 
-    private String state;
 
-    private String country;
-
-    public String getCc() {
-        return cc;
+    public String getAddress() {
+        return address;
     }
 
-    public void setCc(String cc) {
-        this.cc = cc;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getCity() {
@@ -36,14 +31,6 @@ public class Location {
 
     public void setCity(String city) {
         this.city = city;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
     }
 
     public double getDistance() {
@@ -70,19 +57,5 @@ public class Location {
         this.lng = lng;
     }
 
-    public String getPostalCode() {
-        return postalCode;
-    }
 
-    public void setPostalCode(String postalCode) {
-        this.postalCode = postalCode;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
 }

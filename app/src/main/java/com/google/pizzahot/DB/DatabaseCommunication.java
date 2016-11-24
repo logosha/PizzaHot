@@ -92,7 +92,7 @@ public class DatabaseCommunication {
        try {
             Dao<VenueData, Integer> dao = databaseHelper.getVenueDAO();
             List<VenueData> listResult = dao.queryForAll();
-            logList(listResult);
+         //   logList(listResult);
             return listResult;
         } catch (Exception e) {
             e.printStackTrace();

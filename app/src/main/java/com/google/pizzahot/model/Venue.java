@@ -19,6 +19,47 @@ public class Venue {
 
     private ArrayList<Category> categories;
 
+    private Contact contact;
+
+    private String url;
+
+    private double rating;
+
+    private Photo photo;
+
+
+    public Contact getContact() {
+        return contact;
+    }
+
+    public void setContact(Contact contact) {
+        this.contact = contact;
+    }
+
+    public Photo getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(Photo photo) {
+        this.photo = photo;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     public ArrayList<Category> getCategories() {
         return categories;
     }

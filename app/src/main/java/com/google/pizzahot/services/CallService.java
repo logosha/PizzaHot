@@ -2,6 +2,7 @@ package com.google.pizzahot.services;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -51,7 +52,7 @@ public class CallService extends IntentService {
     private void sendRequest() {
 
         String url = "https://api.foursquare.com/v2/venues/search?client_id="
-                + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&v=" + VERSION + "&limit=" + LIMIT + "&offset=" + offset + "&ll=" + latitude + "," + longtitude + "&query=" + QUERY;
+                + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&v=" + VERSION + "&limit=" + LIMIT + "&offset=" + offset + "&ll=" + latitude + "," + longtitude + "&query=" + QUERY + "&venuePhotos=1";
 
         OkHttpClient client = new OkHttpClient();
         String jsonBody = null;
@@ -67,7 +68,7 @@ public class CallService extends IntentService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        Log.d(TAG, jsonBody);
         parseFoursquare(jsonBody);
     }
 
@@ -78,15 +79,16 @@ public class CallService extends IntentService {
         sendBroadcast(intent);
     }
 
+
+
         public void parseFoursquare(String response) {
 
-        FoursquareResponse resp = jsonMarshaller.fromJson(response, FoursquareResponse.class);
+            FoursquareResponse resp = jsonMarshaller.fromJson(response, FoursquareResponse.class);
 
         if (resp.getMeta().getCode() == 200) {
             if (resp.getResponse() != null
                     && resp.getResponse().getVenues() != null
                     && resp.getResponse().getVenues().size() > 0) {
-
 
                 DatabaseCommunication.getInstance(this).addVenues(resp);
 
