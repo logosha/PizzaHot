@@ -8,6 +8,14 @@ import java.util.List;
 
 public class VenueGroup {
 
-    private List<Venue> venues;
+    public List<GroupItem> getGroupItems() {
+        return groupItems;
+    }
+
+    public void setGroupItems(List<GroupItem> groupItems) {
+        this.groupItems = groupItems;
+    }
+
+    private List<GroupItem> groupItems;
 
 }

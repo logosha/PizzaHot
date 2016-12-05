@@ -10,17 +10,17 @@ public class Item {
 
     private int width;
 
-    private String height;
+    private int height;
 
     private String prefix;
 
     private String suffix;
 
-    public String getHeight() {
+    public int getHeight() {
         return height;
     }
 
-    public void setHeight(String height) {
+    public void setHeight(int height) {
         this.height = height;
     }
 

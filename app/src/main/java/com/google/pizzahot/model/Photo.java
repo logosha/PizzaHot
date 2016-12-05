@@ -8,6 +8,8 @@ import java.util.List;
 
 public class Photo {
 
+    private List<Group> groups;
+
     public List<Group> getGroups() {
         return groups;
     }
@@ -16,7 +18,7 @@ public class Photo {
         this.groups = groups;
     }
 
-    private List<Group> groups;
+
 
 
 }

@@ -7,6 +7,7 @@ import java.util.List;
  */
 
 public class Group {
+
     public List<Item> getItems() {
         return items;
     }

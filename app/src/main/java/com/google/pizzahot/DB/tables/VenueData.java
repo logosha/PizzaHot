@@ -44,8 +44,19 @@ public class VenueData implements Serializable {
     @DatabaseField
     private String address;
 
-    @DatabaseField
     private String urlPhoto;
+
+    @DatabaseField
+    private int width;
+
+    @DatabaseField
+    private int height;
+
+    @DatabaseField
+    private String prefix;
+
+    @DatabaseField
+    private String suffix;
 
 
     public String getAddress() {
@@ -104,6 +115,12 @@ public class VenueData implements Serializable {
         this.rating = venue.getRating();
         this.phone = venue.getContact().getPhone();
         this.address = venue.getLocation().getAddress();
+        this.width = venue.getPhoto().getGroups().get(0).getItems().get(0).getWidth();
+        this.height = venue.getPhoto().getGroups().get(0).getItems().get(0).getHeight();
+        this.prefix = venue.getPhoto().getGroups().get(0).getItems().get(0).getPrefix();
+        this.suffix = venue.getPhoto().getGroups().get(0).getItems().get(0).getSuffix();
+
+
 
     }
 
@@ -124,6 +141,10 @@ public class VenueData implements Serializable {
                 ", rating=" + rating +
                 ", phone='" + phone + '\'' +
                 ", urlPhoto='" + urlPhoto + '\'' +
+                ", width=" + width +
+                ", height=" + height +
+                ", prefix='" + prefix + '\'' +
+                ", suffix='" + suffix + '\'' +
                 '}';
     }
 }

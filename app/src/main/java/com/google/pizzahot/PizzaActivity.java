@@ -27,7 +27,7 @@ public class PizzaActivity extends AppCompatActivity {
         tvName.setText("Name - " + value.getName());
         tvDistance.setText("Distance - " + value.getDistance());
         tvLatCity.setText("City - " + value.getCity());
-        tvCountry.setText("Country - " + value.getCountry());
-        tvPost.setText("Postal code - " + value.getPostalCode());
+      //  tvCountry.setText("Country - " + value.getCountry());
+       // tvPost.setText("Postal code - " + value.getPostalCode());
     }
 }

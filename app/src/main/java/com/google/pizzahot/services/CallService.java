@@ -45,14 +45,15 @@ public class CallService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         latitude = intent.getDoubleExtra("lat", MainActivity.latitudeNY);
         longtitude = intent.getDoubleExtra("lon", MainActivity.longitudeNY);
-        offset = 0;//intent.getIntExtra("offset", 0); //offset doesn't supported by API https://developer.foursquare.com/docs/venues/search
+        offset = intent.getIntExtra("offset", offset);
+        //intent.getIntExtra("offset", 0); //offset doesn't supported by API https://developer.foursquare.com/docs/venues/search
         sendRequest();
     }
 
     private void sendRequest() {
 
-        String url = "https://api.foursquare.com/v2/venues/search?client_id="
-                + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&v=" + VERSION + "&limit=" + LIMIT + "&offset=" + offset + "&ll=" + latitude + "," + longtitude + "&query=" + QUERY + "&venuePhotos=1";
+        String url = "https://api.foursquare.com/v2/venues/explore?client_id="
+                + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&v=" + VERSION + "&limit=" + LIMIT + "&offset=" + offset + "&ll=" + latitude + "," + longtitude + "&query=" + QUERY + "&venuePhotos=1"+ "&sortByDistance=1";
 
         OkHttpClient client = new OkHttpClient();
         String jsonBody = null;
@@ -81,14 +82,14 @@ public class CallService extends IntentService {
 
 
 
-        public void parseFoursquare(String response) {
+    public void parseFoursquare(String response) {
 
-            FoursquareResponse resp = jsonMarshaller.fromJson(response, FoursquareResponse.class);
+        FoursquareResponse resp = jsonMarshaller.fromJson(response, FoursquareResponse.class);
 
         if (resp.getMeta().getCode() == 200) {
             if (resp.getResponse() != null
-                    && resp.getResponse().getVenues() != null
-                    && resp.getResponse().getVenues().size() > 0) {
+                    && resp.getResponse().getVenueGroups().get(0).getGroupItems().get(0).getVenues() != null
+                    && resp.getResponse().getVenueGroups().get(0).getGroupItems().get(0).getVenues().size() > 0) {
 
                 DatabaseCommunication.getInstance(this).addVenues(resp);
 
@@ -100,4 +101,5 @@ public class CallService extends IntentService {
             sendBroadcast(STATUS_FINISH_FAIL);
         }
     }
+
 }

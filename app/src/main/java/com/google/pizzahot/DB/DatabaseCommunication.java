@@ -45,10 +45,9 @@ public class DatabaseCommunication {
 
     public void addVenues(FoursquareResponse foursquareResponse) {
         getHelper();
-        List venues = foursquareResponse.getResponse().getVenues();
-        Collections.sort(venues, Venue.VenueDistanceComparator);
+       // Collections.sort(venues, Venue.VenueDistanceComparator);
 
-        for(Venue venue:foursquareResponse.getResponse().getVenues()) {
+        for(Venue venue : foursquareResponse.getResponse().getVenueGroups().get(0).getGroupItems().get(0).getVenues()) {
             addVenueData(venue);
         }
     }
