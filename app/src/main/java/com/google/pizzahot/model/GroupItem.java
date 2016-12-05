@@ -8,12 +8,12 @@ import java.util.List;
 public class GroupItem {
 
     public List<Venue> getVenues() {
-        return venues;
+        return venue;
     }
 
     public void setVenues(List<Venue> venues) {
-        this.venues = venues;
+        this.venue = venues;
     }
 
-    private List<Venue> venues;
+    private List<Venue> venue;
 }

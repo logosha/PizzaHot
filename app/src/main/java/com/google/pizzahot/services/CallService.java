@@ -83,7 +83,7 @@ public class CallService extends IntentService {
 
 
     public void parseFoursquare(String response) {
-
+       // Log.d(TAG, response);
         FoursquareResponse resp = jsonMarshaller.fromJson(response, FoursquareResponse.class);
 
         if (resp.getMeta().getCode() == 200) {

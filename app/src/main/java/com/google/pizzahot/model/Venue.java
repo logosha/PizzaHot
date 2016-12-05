@@ -17,15 +17,13 @@ public class Venue {
 
     private Location location;
 
-    private ArrayList<Category> categories;
-
     private Contact contact;
 
     private String url;
 
     private double rating;
 
-    private Photo photo;
+    private Photo photos;
 
 
     public Contact getContact() {
@@ -37,11 +35,11 @@ public class Venue {
     }
 
     public Photo getPhoto() {
-        return photo;
+        return photos;
     }
 
     public void setPhoto(Photo photo) {
-        this.photo = photo;
+        this.photos = photo;
     }
 
     public double getRating() {
@@ -58,15 +56,6 @@ public class Venue {
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public ArrayList<Category> getCategories() {
-        return categories;
-    }
-
-
-    public void setCategories(ArrayList<Category> categories) {
-        this.categories = categories;
     }
 
     public String getId() {
