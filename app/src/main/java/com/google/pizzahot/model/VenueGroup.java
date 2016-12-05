@@ -1,5 +1,7 @@
 package com.google.pizzahot.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 /**
@@ -16,6 +18,7 @@ public class VenueGroup {
         this.groupItems = groupItems;
     }
 
+    @SerializedName("items")
     private List<GroupItem> groupItems;
 
 }
