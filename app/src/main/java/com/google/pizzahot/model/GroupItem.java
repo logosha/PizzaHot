@@ -7,13 +7,13 @@ import java.util.List;
  */
 public class GroupItem {
 
-    public List<Venue> getVenues() {
+    public Venue getVenue() {
         return venue;
     }
 
-    public void setVenues(List<Venue> venues) {
-        this.venue = venues;
+    public void setVenue(Venue venue) {
+        this.venue = venue;
     }
 
-    private List<Venue> venue;
+    private Venue venue;
 }

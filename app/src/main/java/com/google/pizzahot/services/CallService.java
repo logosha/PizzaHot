@@ -53,7 +53,7 @@ public class CallService extends IntentService {
     private void sendRequest() {
 
         String url = "https://api.foursquare.com/v2/venues/explore?client_id="
-                + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&v=" + VERSION + "&limit=" + LIMIT + "&offset=" + offset + "&ll=" + latitude + "," + longtitude + "&query=" + QUERY + "&venuePhotos=1"+ "&sortByDistance=1";
+                + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&v=" + VERSION + "&limit=" + LIMIT + "&offset=" + offset + "&ll=" + latitude + "," + longtitude + "&query=" + QUERY + "&venuePhotos=1" + "&sortByDistance=1";
 
         OkHttpClient client = new OkHttpClient();
         String jsonBody = null;
@@ -81,25 +81,26 @@ public class CallService extends IntentService {
     }
 
 
-
     public void parseFoursquare(String response) {
-       // Log.d(TAG, response);
+        // Log.d(TAG, response);
         FoursquareResponse resp = jsonMarshaller.fromJson(response, FoursquareResponse.class);
 
         if (resp.getMeta().getCode() == 200) {
-            if (resp.getResponse() != null
-                    && resp.getResponse().getVenueGroups().get(0).getGroupItems().get(0).getVenues() != null
-                    && resp.getResponse().getVenueGroups().get(0).getGroupItems().get(0).getVenues().size() > 0) {
+            if (resp.getMeta().getCode() == 200) {
+                if (resp.getResponse() != null
+                        && resp.getResponse().getVenueGroups().get(0).getGroupItems() != null
+                        && resp.getResponse().getVenueGroups().get(0).getGroupItems().size() > 0) {
 
-                DatabaseCommunication.getInstance(this).addVenues(resp);
+                    DatabaseCommunication.getInstance(this).addVenues(resp);
 
-                sendBroadcast(STATUS_FINISH_SUCCESS);
+                    sendBroadcast(STATUS_FINISH_SUCCESS);
+                } else {
+                    sendBroadcast(STATUS_END);
+                }
             } else {
-                sendBroadcast(STATUS_END);
+                sendBroadcast(STATUS_FINISH_FAIL);
             }
-        } else {
-            sendBroadcast(STATUS_FINISH_FAIL);
         }
-    }
 
+    }
 }

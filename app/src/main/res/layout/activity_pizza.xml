@@ -6,8 +6,26 @@
     android:layout_gravity="center"
     android:weightSum="1">
 
+    <ImageView
+        android:layout_marginTop="20sp"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:layout_gravity="start"
+        android:background="@drawable/pizza"
+        android:layout_weight="0.5" />
+
     <TextView
         android:id="@+id/venue_name"
+        android:layout_marginTop="10sp"
+        android:textSize="20sp"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+    </TextView>
+
+    <TextView
+        android:id="@+id/venue_city_and_address"
         android:layout_marginTop="10sp"
         android:textSize="20sp"
         android:textColor="@color/colorPrimaryDark"
@@ -27,41 +45,26 @@
     </TextView>
 
     <TextView
-        android:id="@+id/venue_city"
+        android:id="@+id/venue_phone"
         android:layout_marginTop="10sp"
         android:textSize="20sp"
         android:textColor="@color/colorPrimaryDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:clickable="true">
     </TextView>
 
     <TextView
-        android:id="@+id/venue_country"
+        android:id="@+id/venue_url"
         android:layout_marginTop="10sp"
         android:textSize="20sp"
         android:textColor="@color/colorPrimaryDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:clickable="true">
     </TextView>
 
-    <TextView
-        android:id="@+id/venue_post"
-        android:layout_marginTop="10sp"
-        android:textSize="20sp"
-        android:textColor="@color/colorPrimaryDark"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center">
-    </TextView>
-
-    <ImageView
-        android:layout_marginTop="20sp"
-        android:layout_width="match_parent"
-        android:layout_height="220dp"
-        android:layout_gravity="start"
-        android:background="@drawable/pizza"
-        android:layout_weight="0.5" />
 
 </LinearLayout>

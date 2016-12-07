@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.google.pizzahot.DB.tables.VenueData;
 import com.google.pizzahot.model.FoursquareResponse;
+import com.google.pizzahot.model.GroupItem;
 import com.google.pizzahot.model.Venue;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
@@ -47,8 +48,8 @@ public class DatabaseCommunication {
         getHelper();
        // Collections.sort(venues, Venue.VenueDistanceComparator);
 
-        for(Venue venue : foursquareResponse.getResponse().getVenueGroups().get(0).getGroupItems().get(0).getVenues()) {
-            addVenueData(venue);
+        for(GroupItem item : foursquareResponse.getResponse().getVenueGroups().get(0).getGroupItems()) {
+            addVenueData(item.getVenue());
         }
     }
 
@@ -91,7 +92,7 @@ public class DatabaseCommunication {
        try {
             Dao<VenueData, Integer> dao = databaseHelper.getVenueDAO();
             List<VenueData> listResult = dao.queryForAll();
-         //   logList(listResult);
+            logList(listResult);
             return listResult;
         } catch (Exception e) {
             e.printStackTrace();
