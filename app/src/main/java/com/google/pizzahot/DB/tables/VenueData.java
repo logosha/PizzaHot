@@ -103,7 +103,21 @@ public class VenueData implements Serializable {
         return city;
     }
 
+    public int getHeight() {
+        return height;
+    }
 
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public int getWidth() {
+        return width;
+    }
 
     public VenueData(Venue venue) {
         this.city = venue.getLocation().getCity();

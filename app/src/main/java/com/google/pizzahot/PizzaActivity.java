@@ -5,11 +5,15 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.pizzahot.DB.tables.VenueData;
+import com.squareup.picasso.Picasso;
 
 public class PizzaActivity extends AppCompatActivity {
+
+    String urlPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +25,8 @@ public class PizzaActivity extends AppCompatActivity {
         TextView tvDistance = (TextView) findViewById(R.id.venue_distance);
         TextView tvPhone = (TextView) findViewById(R.id.venue_phone);
         TextView tvURL = (TextView) findViewById(R.id.venue_url);
+        ImageView image = (ImageView) findViewById(R.id.venue_photo);
+
 
 
         Intent intent = this.getIntent();
@@ -31,6 +37,10 @@ public class PizzaActivity extends AppCompatActivity {
         tvDistance.setText("Distance: " + value.getDistance());
         tvPhone.setText(value.getPhone());
         tvURL.setText(value.getUrl());
+
+        Picasso.with(this)
+                .load(pictureRequest(value))
+                .into(image);
 
         tvPhone.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,5 +58,18 @@ public class PizzaActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private String pictureRequest(VenueData val) {
+        if (val != null) {
+            StringBuilder builder = new StringBuilder();
+            builder.append(val.getPrefix())
+                    .append(val.getWidth())
+                    .append("x")
+                    .append(val.getHeight())
+                    .append(val.getSuffix());
+            return builder.toString();
+        }
+        return "nothing";
     }
 }

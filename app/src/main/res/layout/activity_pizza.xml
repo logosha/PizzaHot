@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="220dp"
         android:layout_gravity="start"
-        android:background="@drawable/pizza"
+        android:id="@+id/venue_photo"
         android:layout_weight="0.5" />
 
     <TextView
