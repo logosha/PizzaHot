@@ -64,9 +64,9 @@ public class PizzaActivity extends AppCompatActivity {
         if (val != null) {
             StringBuilder builder = new StringBuilder();
             builder.append(val.getPrefix())
-                    .append(val.getWidth())
-                    .append("x")
-                    .append(val.getHeight())
+            //        .append(val.getWidth())
+                    .append("1024")
+            //        .append(val.getHeight())
                     .append(val.getSuffix());
             return builder.toString();
         }
