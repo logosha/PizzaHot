@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,12 +14,12 @@ import com.squareup.picasso.Picasso;
 
 public class PizzaActivity extends AppCompatActivity {
 
-    String urlPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pizza);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         TextView tvName = (TextView) findViewById(R.id.venue_name);
         TextView tvCityAddress = (TextView) findViewById(R.id.venue_city_and_address);
@@ -32,43 +33,29 @@ public class PizzaActivity extends AppCompatActivity {
         Intent intent = this.getIntent();
         final VenueData value = (VenueData) intent.getSerializableExtra("key");
 
+        Picasso.with(this)
+                .load(pictureRequest(value))
+                .placeholder(R.drawable.pizza)
+                .into(image);
+
         tvName.setText(value.getName());
         tvCityAddress.setText( value.getCity() + ", " + value.getAddress());
         tvDistance.setText("Distance: " + value.getDistance());
         tvPhone.setText(value.getPhone());
         tvURL.setText(value.getUrl());
 
-        Picasso.with(this)
-                .load(pictureRequest(value))
-                .into(image);
-
-        tvPhone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_DIAL);
-                intent.setData(Uri.parse("tel:"+value.getPhone()));
-                startActivity(intent);
-            }
-        });
-
-        tvURL.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(value.getUrl())));
-            }
-        });
 
         tvCityAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("geo:"+value.getLatitude()+","+value.getLongitude()));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:"+value.getLatitude()+","+value.getLongitude()+"?q="+value.getAddress()));
                 startActivity(intent);
             }
         });
 
     }
+
+
 
     private String pictureRequest(VenueData val) {
         if (val != null) {
@@ -82,4 +69,18 @@ public class PizzaActivity extends AppCompatActivity {
         }
         return "nothing";
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+
 }
