@@ -58,6 +58,16 @@ public class PizzaActivity extends AppCompatActivity {
             }
         });
 
+        tvCityAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("geo:"+value.getLatitude()+","+value.getLongitude()));
+                startActivity(intent);
+            }
+        });
+
     }
 
     private String pictureRequest(VenueData val) {
